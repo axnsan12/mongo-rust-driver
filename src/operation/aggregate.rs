@@ -124,6 +124,7 @@ impl OperationWithDefaults for Aggregate {
             self.options.as_ref().and_then(|opts| opts.batch_size),
             self.options.as_ref().and_then(|opts| opts.max_await_time),
             comment,
+            self.options.as_ref().and_then(|opts| opts.cursor_type),
         ))
     }
 

@@ -16,6 +16,7 @@ use crate::{
     change_stream::event::ResumeToken,
     client::AsyncDropToken,
     cmap::conn::PinnedConnectionHandle,
+    coll::options::CursorType,
     error::{Error, ErrorKind, Result},
     operation,
     options::ServerAddress,
@@ -371,6 +372,7 @@ impl CursorSpecification {
         batch_size: impl Into<Option<u32>>,
         max_time: impl Into<Option<Duration>>,
         comment: impl Into<Option<Bson>>,
+        cursor_type: impl Into<Option<CursorType>>,
     ) -> Self {
         Self {
             info: CursorInformation {
@@ -380,6 +382,7 @@ impl CursorSpecification {
                 batch_size: batch_size.into(),
                 max_time: max_time.into(),
                 comment: comment.into(),
+                cursor_type: cursor_type.into(),
             },
             initial_buffer: info.first_batch,
             post_batch_resume_token: ResumeToken::from_raw(info.post_batch_resume_token),
@@ -415,6 +418,7 @@ pub(crate) struct CursorInformation {
     pub(crate) batch_size: Option<u32>,
     pub(crate) max_time: Option<Duration>,
     pub(crate) comment: Option<Bson>,
+    pub(crate) cursor_type: Option<CursorType>,
 }
 
 #[derive(Debug)]

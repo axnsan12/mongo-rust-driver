@@ -445,7 +445,7 @@ impl Connection {
             ready_and_available_time: None,
             pinned_sender: self.pinned_sender.clone(),
             compressor: self.compressor.clone(),
-            more_to_come: false,
+            more_to_come: self.more_to_come,
         }
     }
 

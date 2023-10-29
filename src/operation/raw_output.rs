@@ -50,6 +50,10 @@ impl<Op: Operation> Operation for RawOutput<Op> {
         self.0.is_acknowledged()
     }
 
+    fn exhaust_allowed(&self) -> bool {
+        self.0.exhaust_allowed()
+    }
+
     fn write_concern(&self) -> Option<&crate::options::WriteConcern> {
         self.0.write_concern()
     }

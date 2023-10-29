@@ -121,6 +121,9 @@ pub(crate) trait Operation {
     /// Whether or not this operation will request acknowledgment from the server.
     fn is_acknowledged(&self) -> bool;
 
+    /// Whether or not this operation supports moreToCome/streaming responses.
+    fn exhaust_allowed(&self) -> bool;
+
     /// The write concern to use for this operation, if any.
     fn write_concern(&self) -> Option<&WriteConcern>;
 
@@ -448,6 +451,11 @@ pub(crate) trait OperationWithDefaults {
             .unwrap_or(true)
     }
 
+    /// Whether or not this operation supports moreToCome/streaming responses.
+    fn exhaust_allowed(&self) -> bool {
+        false
+    }
+
     /// The write concern to use for this operation, if any.
     fn write_concern(&self) -> Option<&WriteConcern> {
         None
@@ -508,6 +516,9 @@ impl<T: OperationWithDefaults> Operation for T {
     }
     fn is_acknowledged(&self) -> bool {
         self.is_acknowledged()
+    }
+    fn exhaust_allowed(&self) -> bool {
+        self.exhaust_allowed()
     }
     fn write_concern(&self) -> Option<&WriteConcern> {
         self.write_concern()

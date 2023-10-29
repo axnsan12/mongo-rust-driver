@@ -20,6 +20,7 @@ fn op_selection_criteria() {
         batch_size: None,
         max_time: None,
         comment: None,
+        cursor_type: None,
     };
     let get_more = GetMore::new(info, None);
     let server_description = ServerDescription {

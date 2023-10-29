@@ -77,6 +77,7 @@ impl OperationWithDefaults for ListCollections {
             self.options.as_ref().and_then(|opts| opts.batch_size),
             None,
             None,
+            None,
         ))
     }
 

@@ -61,6 +61,10 @@ impl<'conn> Operation for RunCursorCommand<'conn> {
         self.run_command.is_acknowledged()
     }
 
+    fn exhaust_allowed(&self) -> bool {
+        self.run_command.exhaust_allowed()
+    }
+
     fn write_concern(&self) -> Option<&WriteConcern> {
         self.run_command.write_concern()
     }
@@ -107,6 +111,7 @@ impl<'conn> Operation for RunCursorCommand<'conn> {
             self.options.as_ref().and_then(|opts| opts.batch_size),
             self.options.as_ref().and_then(|opts| opts.max_time),
             comment,
+            self.options.as_ref().and_then(|opts| opts.cursor_type),
         ))
     }
 }

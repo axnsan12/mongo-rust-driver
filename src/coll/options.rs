@@ -110,6 +110,14 @@ pub enum CursorType {
     /// Similar to `Tailable`, except that the cursor should block on receiving more results if
     /// none are available.
     TailableAwait,
+
+    /// Sets the exhaustAllowed flag on the query, allowing the server to keep sending result
+    /// batches without waiting for the client to request each batch, reducing latency.
+    ///
+    /// `Exhaust` cursors require a dedicated connection, and if they are dropped early will
+    /// lead to that connection being closed instead of the connection being returned to the
+    /// driver's connection pool.
+    Exhaust,
 }
 
 /// Specifies the options to a
@@ -540,6 +548,10 @@ pub struct AggregateOptions {
         rename(serialize = "cursor")
     )]
     pub batch_size: Option<u32>,
+
+    /// The type of cursor to return.
+    #[serde(skip)]
+    pub cursor_type: Option<CursorType>,
 
     /// Opt out of document-level validation.
     pub bypass_document_validation: Option<bool>,

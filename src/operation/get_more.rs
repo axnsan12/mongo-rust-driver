@@ -10,6 +10,7 @@ use crate::{
     bson::{doc, Bson},
     change_stream::event::ResumeToken,
     cmap::{conn::PinnedConnectionHandle, Command, RawCommandResponse, StreamDescription},
+    coll::options::CursorType,
     cursor::CursorInformation,
     error::{ErrorKind, Result},
     operation::OperationWithDefaults,
@@ -27,6 +28,7 @@ pub(crate) struct GetMore<'conn> {
     max_time: Option<Duration>,
     pinned_connection: Option<&'conn PinnedConnectionHandle>,
     comment: Option<Bson>,
+    cursor_type: Option<CursorType>,
 }
 
 impl<'conn> GetMore<'conn> {
@@ -42,6 +44,7 @@ impl<'conn> GetMore<'conn> {
             max_time: info.max_time,
             pinned_connection: pinned,
             comment: info.comment,
+            cursor_type: info.cursor_type,
         }
     }
 }
@@ -77,11 +80,9 @@ impl<'conn> OperationWithDefaults for GetMore<'conn> {
             body.insert("comment", comment);
         }
 
-        Ok(Command::new(
-            Self::NAME.to_string(),
-            self.ns.db.clone(),
-            body,
-        ))
+        let mut cmd = Command::new(Self::NAME.to_string(), self.ns.db.clone(), body);
+        cmd.exhaust_allowed = self.exhaust_allowed();
+        Ok(cmd)
     }
 
     fn handle_response(
@@ -102,6 +103,13 @@ impl<'conn> OperationWithDefaults for GetMore<'conn> {
 
     fn selection_criteria(&self) -> Option<&SelectionCriteria> {
         Some(&self.selection_criteria)
+    }
+
+    fn exhaust_allowed(&self) -> bool {
+        match &self.cursor_type {
+            Some(CursorType::Exhaust) => true,
+            _ => false,
+        }
     }
 
     fn pinned_connection(&self) -> Option<&PinnedConnectionHandle> {

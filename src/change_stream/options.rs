@@ -7,6 +7,7 @@ use typed_builder::TypedBuilder;
 use crate::{
     bson::{Bson, Timestamp},
     change_stream::event::ResumeToken,
+    coll::options::CursorType,
     collation::Collation,
     concern::ReadConcern,
     options::AggregateOptions,
@@ -74,6 +75,11 @@ pub struct ChangeStreamOptions {
     #[serde(skip_serializing)]
     pub batch_size: Option<u32>,
 
+    /// The type of cursor to use for the underlying aggregate operation.
+    #[builder(default)]
+    #[serde(skip)]
+    pub cursor_type: Option<CursorType>,
+
     /// Specifies a collation.
     #[builder(default)]
     #[serde(skip_serializing)]
@@ -113,6 +119,7 @@ impl ChangeStreamOptions {
             .read_concern(self.read_concern.clone())
             .selection_criteria(self.selection_criteria.clone())
             .comment_bson(self.comment.clone())
+            .cursor_type(CursorType::Exhaust)
             .build()
     }
 }

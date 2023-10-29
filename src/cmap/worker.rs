@@ -510,7 +510,7 @@ impl ConnectionPoolWorker {
             self.close_connection(conn, ConnectionClosedReason::Error);
         } else if conn.generation.is_stale(&self.generation) {
             self.close_connection(conn, ConnectionClosedReason::Stale);
-        } else if conn.is_executing() {
+        } else if conn.is_executing() || conn.is_streaming() {
             self.close_connection(conn, ConnectionClosedReason::Dropped);
         } else {
             self.available_connections.push_back(conn);

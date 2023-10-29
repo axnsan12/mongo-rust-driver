@@ -343,6 +343,7 @@ impl<T> Drop for Cursor<T> {
             return;
         }
 
+        // TODO: for Exhaust cursors, killCursors should probably not use the pinned connection?
         kill_cursor(
             self.client.clone(),
             &mut self.drop_token,
